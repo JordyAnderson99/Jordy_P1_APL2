@@ -71,7 +71,10 @@
                             <td>@producto.Existencia</td>
                             <td>@string.Format("{0:c}", producto.ValorInventario)</td>
 
-                            
+                            <td>
+                                <button @onclick="() => Editar(producto.ProductoId)" class="btn btn-warning oi oi-pencil"></button>
+                                <button @onclick="() => Eliminar(producto.ProductoId)" class="btn btn-danger oi oi-trash"></button>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -100,7 +103,34 @@
         Filtro = Productos;
     }
 
-    
+    @* Editar Producto*@
+    void Editar(int id)
+    {
+        Nav.NavigateTo($"Productos/{id}");
+    }
+
+    @* Eliminar Producto *@
+    async Task Eliminar(int id)
+    {
+        Nav.ToAbsoluteUri($"R_Productos/{id}");
+
+        bool confirmed = await Confirmacion.InvokeAsync<bool>("confirm", "Estas seguro de que deseas eliminar este Producto?");
+        if (confirmed)
+        {
+            bool eliminado;
+            eliminado = ProductosBLL.Eliminar(id);
+
+            if (eliminado)
+            {
+                Actualizar();
+                Toast.ShowSuccess("Registro Eliminado exitosamente.");
+            }
+            else
+                Toast.ShowError("No fue posible Eliminar este Registro.");
+            return;
+        }
+        return;
+    }
 
     @* Filtrar Productos*@
     void FiltrarProductos()
