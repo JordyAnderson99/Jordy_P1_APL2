@@ -12,7 +12,7 @@ namespace Jordy_P1_APL2.Models
 
         [Required(ErrorMessage = "No debe de estar Vacio el campo'Descripcion'")]
         [MinLength(4, ErrorMessage = "El Campo 'Descripcion' Debe tener por lo menos (4 caracteres),")]
-        [RegularExpression(@"\S(,*)\S", ErrorMessage = "Debe ser un texto,")]
+        [RegularExpression(@"\S(.*)\S", ErrorMessage = "Debe ser un texto.")]
         public string Descripcion { get; set; }
 
         [Required(ErrorMessage = "No debe de estar Vacio el campo'Existencia'")]

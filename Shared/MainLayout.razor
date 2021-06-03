@@ -15,3 +15,13 @@
         </div>
     </div>
 </div>
+
+@using Blazored.Toast.Configuration
+<BlazoredToasts Position="ToastPosition.TopRight"
+                Timeout="5"
+                IconType="IconType.FontAwesome"
+                SuccessClass="success-toast-override"
+                SuccessIcon="fa fa-check"
+                ErrorIcon="fa fa-times"
+                InfoIcon="fa fa-info"
+                WarningIcon="fa fa-warning" />
