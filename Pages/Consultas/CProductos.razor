@@ -1,0 +1,129 @@
+﻿@page "/CProductos"
+
+@using Jordy_P1_APL2.BLL;
+@using Jordy_P1_APL2.Models;
+
+@inject IToastService Toast
+@inject NavigationManager Nav
+@inject IJSRuntime Confirmacion
+
+<div class="card">
+    <div class="card-header">
+        <div class="form-row mb-3 mt-3">
+            <div class="col-sm-4">
+                <h3>Consulta Productos</h3>
+            </div>
+
+            @*Seletc *@
+            <div class="col-sm-3">
+                <select @bind="Index" class="custom-select">
+                    <option value="-1" disabled>Filtrar por...</option>
+                    <option value="0">Todos</option>
+                    <option value="1">Producto Id</option>
+                    <option value="2">Descripción</option>
+                </select>
+            </div>
+
+            @*Criterio*@
+            <div class="col-sm-3">
+                <input class="form-control w-100" type="@(Index == 1 ? "number" : "text")" @bind="Criterio" placeholder="Ingrese el criterio a filtrar" />
+            </div>
+
+            @*Boton para filtrar*@
+            <div class="col-sm-2">
+                <button class="btn btn-primary" @onclick="FiltrarProductos"><i class="oi oi-magnifying-glass" /> Buscar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card-body">
+        @*Validar*@
+        @if (Productos == null || Filtro == null)
+        {
+            <div>
+                <h4>Cargando...</h4>
+            </div>
+        }
+        else
+        {
+            @*el titulo de la tabla*@
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Producto Id</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Existencia</th>
+                        <th>Valor Inventario</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                @*Datos de la Tabla*@
+                <tbody>
+                    @foreach (var producto in Filtro)
+                    {
+                        <tr>
+                            <td>@producto.ProductoId</td>
+                            <td>@producto.Descripcion</td>
+                            <td>@string.Format("{0:c}", producto.Costo)</td>
+                            <td>@producto.Existencia</td>
+                            <td>@string.Format("{0:c}", producto.ValorInventario)</td>
+
+                            
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@*Codigo*@
+@code {
+    int Index = -1;
+    string Criterio;
+
+    public List<Productos> Productos { get; set; }
+    public List<Productos> Filtro { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Actualizar();
+    }
+
+    @* Actualizar Producto*@
+    void Actualizar()
+    {
+        Productos = ProductosBLL.GetList(p => true).ToList();
+        Filtro = Productos;
+    }
+
+    
+
+    @* Filtrar Productos*@
+    void FiltrarProductos()
+    {
+        //Mostrar Todos
+        if (Index == 0)
+        {
+            Filtro = ProductosBLL.GetList(p => true).ToList();
+        }
+
+        //ProductoId 
+        else if (Index == 1)
+        {
+            if (int.TryParse(Criterio, out int ProductoId))
+            {
+                Filtro = ProductosBLL.GetList(p => p.ProductoId == ProductoId).ToList();
+            }
+        }
+
+        //Descripcion
+        else if (Index == 2)
+        {
+            Filtro = ProductosBLL.GetList(p => p.Descripcion.ToLower().Contains(Criterio.ToLower())).ToList();
+        }
+    }
+}
